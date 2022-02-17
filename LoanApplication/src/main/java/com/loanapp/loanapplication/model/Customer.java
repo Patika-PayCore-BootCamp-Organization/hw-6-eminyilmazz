@@ -3,7 +3,8 @@ package com.loanapp.loanapplication.model;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Digits;
+import java.util.List;
 
 @Data
 @Entity
@@ -14,7 +15,7 @@ import javax.validation.constraints.Size;
 public class Customer {
     @Id
     @Column(name = "tckn", nullable = false)
-    @Size(min = 11, max = 11)
+    @Digits(fraction = 0, integer = 11)
     private Long tckn;
 
     @Transient
@@ -28,4 +29,8 @@ public class Customer {
 
     @Column(name = "monthly_salary")
     private double monthlySalary;
+
+    @Transient
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Loan> loanList;
 }

@@ -9,4 +9,8 @@ public interface CustomerService {
     Iterable<CustomerDto> getAll();
 
     ResponseEntity<Customer> addCustomer(CustomerDto customerDto);
+
+    Customer updateCustomer(CustomerDto customerDto);
+
+    Customer findById(Long tckn);
 }
