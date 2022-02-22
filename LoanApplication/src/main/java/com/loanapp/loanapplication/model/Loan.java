@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "loans")
 public class Loan {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

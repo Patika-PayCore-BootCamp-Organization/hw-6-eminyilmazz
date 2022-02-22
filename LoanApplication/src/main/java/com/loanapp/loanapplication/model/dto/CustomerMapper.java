@@ -2,6 +2,8 @@ package com.loanapp.loanapplication.model.dto;
 
 import com.loanapp.loanapplication.model.Customer;
 
+import java.time.LocalDateTime;
+
 public class CustomerMapper {
     private CustomerMapper(){}
     public static CustomerDto toDto(Customer customer) {
@@ -22,11 +24,13 @@ public class CustomerMapper {
                 .monthlySalary(customerDto.getMonthlySalary())
                 .build();
     }
-    public static CustomerSmsDto toSmsDto(Customer customer) {
+    public static CustomerSmsDto toSmsDto(Customer customer, LocalDateTime date, Double amount) {
         return CustomerSmsDto.builder()
                 .name(customer.getName())
                 .lastName(customer.getLastName())
                 .phoneNumber(customer.getPhoneNumber())
+                .loanAmount(amount)
+                .approvalDate(date)
                 .build();
     }
 }
