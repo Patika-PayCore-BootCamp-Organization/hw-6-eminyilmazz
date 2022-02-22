@@ -3,6 +3,7 @@ package com.loanapp.loanapplication.service.impl;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.loanapp.loanapplication.exception.IllegalTcknException;
 import com.loanapp.loanapplication.exception.NotFoundException;
+import com.loanapp.loanapplication.exception.TcknValidator;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
 import com.loanapp.loanapplication.model.dto.LoanDto;
@@ -11,6 +12,8 @@ import com.loanapp.loanapplication.repository.LoanRepository;
 import com.loanapp.loanapplication.service.CustomerService;
 import com.loanapp.loanapplication.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -28,10 +31,7 @@ public class LoanServiceImpl implements LoanService {
     private LoanRepository loanRepository;
 
     @Override
-    public Map<Double, Boolean> applyLoan(Long tckn) {
-        if (tckn.toString().length() != 11) {
-            throw new IllegalTcknException("TCKN must be an 11 digits number!");
-        }
+    public ResponseEntity<Map<Double, Boolean>> applyLoan(Long tckn) {
         try {
             Customer customer = customerService.getByTckn(tckn);
             customer.setCreditScore(calculateCreditScore(tckn));
@@ -44,7 +44,7 @@ public class LoanServiceImpl implements LoanService {
                                         .customer(customer)
                                         .build());
             }
-            return loanApplicationResponse;
+            return ResponseEntity.status(HttpStatus.OK).body(loanApplicationResponse);
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }
@@ -71,12 +71,15 @@ public class LoanServiceImpl implements LoanService {
                     "\nExample:\n{\n\"tckn\" : \"12345678910\",\n\"approved\" : true\"\n}");
         }
         try{
+            TcknValidator.validateTckn(objectNode.get("tckn").asLong());
             boolean hasApproved = objectNode.has("approved");
             if (hasApproved && objectNode.get("approved").asBoolean()) {
                 return getApprovedLoansById(objectNode.get("tckn").asLong());
             } else {
                 return getAllLoansById(objectNode.get("tckn").asLong());
             }
+        } catch (IllegalTcknException e) {
+            throw new IllegalTcknException(e.getMessage());
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }

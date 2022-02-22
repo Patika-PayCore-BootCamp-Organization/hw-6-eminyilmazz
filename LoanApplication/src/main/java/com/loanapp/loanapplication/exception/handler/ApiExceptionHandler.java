@@ -16,7 +16,12 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler({DuplicateTcknException.class, IllegalTcknException.class})
+    @ExceptionHandler({IllegalTcknException.class})
+    public ResponseEntity<String> tcknException(IllegalTcknException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler({DuplicateTcknException.class})
     public ResponseEntity<String> tcknException(DuplicateTcknException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }

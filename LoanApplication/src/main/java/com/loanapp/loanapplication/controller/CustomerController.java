@@ -3,6 +3,7 @@ package com.loanapp.loanapplication.controller;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.loanapp.loanapplication.exception.DuplicateTcknException;
 import com.loanapp.loanapplication.exception.NotFoundException;
+import com.loanapp.loanapplication.exception.TcknValidator;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
 import com.loanapp.loanapplication.model.dto.CustomerDto;
@@ -17,11 +18,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.loanapp.loanapplication.model.dto.CustomerMapper.toDto;
 
 @Validated
 @RestController
@@ -102,19 +103,13 @@ public class CustomerController {
     /**
      * @apiNote This API is to apply for loan. If the provided Customer does not in the customer table, it is saved. Else
      * does not update it and throws IllegalArgumentException.
-     * @param customerDto as a request body.
-     * @return Map<Double, Boolean> - Keys of the returned map is the loan amount. It is equal to 0D if it is declined.
+     * @param tckn as a request parameter. Value is validated to be 11 digits number.
+     * @return ResponseEntity<Map<Double, Boolean>> - Keys of the returned map is the loan amount. It is equal to 0D if it is declined.
      * Values of the returned map is th Boolean value of the approval status of the application.
-     * @throws IllegalArgumentException thrown if CustomerDto exists in database by ID but not equal to the entity.
      */
     @GetMapping ("/loan/apply")
-    public Map<Double, Boolean> applyLoan(@Valid @RequestBody CustomerDto customerDto) {
-        Long tckn = customerDto.getTckn();
-        if(!customerService.existById(tckn)) {
-            customerService.addCustomer(customerDto);
-        } else if (customerDto.equals(toDto(customerService.getByTckn(tckn)))){
-            throw new IllegalArgumentException("Provided TCKN exists in the database but is not equal to the entity.");
-        }
+    public ResponseEntity<Map<Double, Boolean>> applyLoan(@RequestParam(name = "tckn") Long tckn) {
+        TcknValidator.validateTckn(tckn);
         return loanService.applyLoan(tckn);
     }
     /**
