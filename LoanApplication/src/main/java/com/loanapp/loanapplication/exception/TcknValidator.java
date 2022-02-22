@@ -7,7 +7,7 @@ public class TcknValidator {
 
     private static final String _tcknRegex = "^[0-9]{11}";
 
-    public static boolean validateTckn(Long tckn){
+    public static boolean validate(Long tckn){
         String tcknString = String.valueOf(tckn);
         Pattern pattern = Pattern.compile(_tcknRegex);
         Matcher matcher = pattern.matcher(tcknString);

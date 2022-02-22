@@ -71,7 +71,7 @@ public class LoanServiceImpl implements LoanService {
                     "\nExample:\n{\n\"tckn\" : \"12345678910\",\n\"approved\" : true\"\n}");
         }
         try{
-            TcknValidator.validateTckn(objectNode.get("tckn").asLong());
+            TcknValidator.validate(objectNode.get("tckn").asLong());
             boolean hasApproved = objectNode.has("approved");
             if (hasApproved && objectNode.get("approved").asBoolean()) {
                 return getApprovedLoansById(objectNode.get("tckn").asLong());

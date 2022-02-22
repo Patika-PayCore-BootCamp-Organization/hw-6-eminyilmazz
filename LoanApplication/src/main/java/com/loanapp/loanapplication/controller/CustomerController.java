@@ -1,8 +1,6 @@
 package com.loanapp.loanapplication.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.loanapp.loanapplication.exception.DuplicateTcknException;
-import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.exception.TcknValidator;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
@@ -18,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -57,6 +54,7 @@ public class CustomerController {
      */
     @GetMapping
     public ResponseEntity<Customer> getByTckn(@RequestParam Long tckn){
+        TcknValidator.validate(tckn);
         List<Loan> loanList = loanService.getApprovedLoansById(tckn)
                 .stream()
                 .map(LoanMapper::toSimpleEntity)
@@ -72,11 +70,8 @@ public class CustomerController {
      */
     @PostMapping("/add")
     public ResponseEntity<?> addCustomer(@Valid @RequestBody CustomerDto customerDto) {
-       try {
-           return customerService.addCustomer(customerDto);
-        } catch (DuplicateTcknException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-       }
+        TcknValidator.validate(customerDto.getTckn());
+        return customerService.addCustomer(customerDto);
     }
     /**
      * @apiNote Updates an already existing Customer. Customer TCKN and phone number are validated.
@@ -85,11 +80,7 @@ public class CustomerController {
      */
     @PutMapping("/update")
     public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody CustomerDto customerDto) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(customerService.updateCustomer(customerDto));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.updateCustomer(customerDto));
     }
     /**
      * @apiNote DeleteMapping for an existing Customer.
@@ -109,7 +100,7 @@ public class CustomerController {
      */
     @GetMapping ("/loan/apply")
     public ResponseEntity<Map<Double, Boolean>> applyLoan(@RequestParam(name = "tckn") Long tckn) {
-        TcknValidator.validateTckn(tckn);
+        TcknValidator.validate(tckn);
         return loanService.applyLoan(tckn);
     }
     /**
