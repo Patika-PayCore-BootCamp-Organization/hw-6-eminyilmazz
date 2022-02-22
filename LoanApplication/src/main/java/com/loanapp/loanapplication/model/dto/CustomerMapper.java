@@ -9,6 +9,7 @@ public class CustomerMapper {
                 .tckn(customer.getTckn())
                 .name(customer.getName())
                 .lastName(customer.getLastName())
+                .phoneNumber(customer.getPhoneNumber())
                 .monthlySalary(customer.getMonthlySalary())
                 .build();
     }
@@ -17,7 +18,15 @@ public class CustomerMapper {
                 .tckn(customerDto.getTckn())
                 .name(customerDto.getName())
                 .lastName(customerDto.getLastName())
+                .phoneNumber(customerDto.getPhoneNumber())
                 .monthlySalary(customerDto.getMonthlySalary())
+                .build();
+    }
+    public static CustomerSmsDto toSmsDto(Customer customer) {
+        return CustomerSmsDto.builder()
+                .name(customer.getName())
+                .lastName(customer.getLastName())
+                .phoneNumber(customer.getPhoneNumber())
                 .build();
     }
 }

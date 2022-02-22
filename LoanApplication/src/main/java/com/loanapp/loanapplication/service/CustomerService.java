@@ -6,11 +6,15 @@ import org.springframework.http.ResponseEntity;
 
 public interface CustomerService {
 
-    Iterable<CustomerDto> getAll();
+    Iterable<Customer> getAll();
 
-    ResponseEntity<Customer> addCustomer(CustomerDto customerDto);
+    Customer getByTckn(Long tckn);
+
+    ResponseEntity<CustomerDto> addCustomer(CustomerDto customerDto);
 
     Customer updateCustomer(CustomerDto customerDto);
 
-    Customer findById(Long tckn);
+    ResponseEntity<?> deleteCustomer(Long tckn);
+
+    boolean existById(Long tckn);
 }

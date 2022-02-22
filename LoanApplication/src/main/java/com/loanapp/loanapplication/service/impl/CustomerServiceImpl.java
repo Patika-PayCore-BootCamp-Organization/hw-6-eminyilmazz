@@ -1,20 +1,17 @@
 package com.loanapp.loanapplication.service.impl;
 
+import com.loanapp.loanapplication.exception.DuplicateTcknException;
 import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.dto.CustomerDto;
-import com.loanapp.loanapplication.model.dto.CustomerMapper;
 import com.loanapp.loanapplication.repository.CustomerRepository;
 import com.loanapp.loanapplication.service.CustomerService;
-import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
-
+import static com.loanapp.loanapplication.model.dto.CustomerMapper.toDto;
 import static com.loanapp.loanapplication.model.dto.CustomerMapper.toEntity;
 
 @Service
@@ -23,17 +20,23 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
 
     @Override
-    public Iterable<CustomerDto> getAll() {
-        return customerRepository.findAll()
-                                 .stream()
-                                 .map(CustomerMapper::toDto)
-                                 .collect(Collectors.toList());
+    public Iterable<Customer> getAll() {
+        return customerRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<Customer> addCustomer(CustomerDto customerDto) {
+    public Customer getByTckn(Long tckn) {
+        return customerRepository.findById(tckn)
+                                 .orElseThrow(() -> new NotFoundException("Customer tckn: " + tckn + " not found!"));
+    }
+    @Override
+    public ResponseEntity<CustomerDto> addCustomer(CustomerDto customerDto) throws DuplicateTcknException {
+        if (customerRepository.existsById(customerDto.getTckn())) {
+            throw new DuplicateTcknException();
+        }
+        Customer customer = customerRepository.save(toEntity(customerDto));
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(customerRepository.save(toEntity(customerDto)));
+                .body(toDto(customer));
     }
 
     @Override
@@ -45,41 +48,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer findById(Long tckn) throws NotFoundException{
-        return customerRepository.findById(tckn)
-                                 .orElseThrow(() -> new NotFoundException("Customer tckn: " + tckn + " not found!"));
+    public ResponseEntity<?> deleteCustomer(Long tckn) {
+        if (!customerRepository.existsById(tckn)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Delete operation is not successful.\nThe customer does not exist.");
+        }
+        customerRepository.deleteById(tckn);
+        return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted.");
     }
 
-//    @Override
-//    public Map<Double, Boolean> applyLoan(Long tckn) {
-//        if (tckn.toString().length() != 11) {
-//            throw new IllegalTcknException("TCKN must be an 11 digits number!");
-//        }
-//        Optional<Customer> optionalCustomer = customerRepository.findById(tckn);
-//        if (!optionalCustomer.isPresent()) {
-//            throw new NotFoundException("Customer not found by provided TCKN");
-//        } else {
-//            Customer customer = optionalCustomer.get();
-//            Map<Double, Boolean> loanApplicationResponse = loanApplicationProcessor(customer.getCreditScore(),
-//                    customer.getMonthlySalary());
-//            if(loanApplicationResponse.containsValue(true)) {
-//
-//            }
-//            return loanApplicationResponse;
-//        }
-//    }
-//
-//    @Override
-//    public Map<Double, Boolean> loanApplicationProcessor(Integer creditScore, Double monthlySalary) {
-//        final Double CREDIT_LIMIT_MULTIPLIER = 4D;
-//        Double loanAmount = 0D;
-//        if(creditScore <= 500) {
-//            return Collections.singletonMap(loanAmount, false);
-//        } else if(creditScore != 1000) {
-//            loanAmount = monthlySalary < 5000 ? 10000D : 20000D;
-//            return Collections.singletonMap(loanAmount, true);
-//        } else {
-//            return Collections.singletonMap(CREDIT_LIMIT_MULTIPLIER * monthlySalary, true);
-//        }
-//    }
+    @Override
+    public boolean existById(Long tckn) {
+        return customerRepository.existsById(tckn);
+    }
 }
