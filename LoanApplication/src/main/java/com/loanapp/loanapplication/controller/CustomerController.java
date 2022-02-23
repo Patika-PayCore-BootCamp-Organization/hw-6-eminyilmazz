@@ -101,7 +101,7 @@ public class CustomerController {
     @GetMapping ("/loan/apply")
     public ResponseEntity<Map<Double, Boolean>> applyLoan(@RequestParam(name = "tckn") Long tckn) {
         TcknValidator.validate(tckn);
-        return loanService.applyLoan(tckn);
+        return ResponseEntity.ok(loanService.applyLoan(tckn));
     }
     /**
      * @apiNote This API is to get the history of loan applications of a customer.

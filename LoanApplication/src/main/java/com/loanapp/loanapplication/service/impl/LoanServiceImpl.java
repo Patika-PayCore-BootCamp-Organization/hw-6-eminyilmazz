@@ -12,8 +12,6 @@ import com.loanapp.loanapplication.repository.LoanRepository;
 import com.loanapp.loanapplication.service.CustomerService;
 import com.loanapp.loanapplication.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -29,9 +27,17 @@ public class LoanServiceImpl implements LoanService {
     private CustomerService customerService;
     @Autowired
     private LoanRepository loanRepository;
-
+    /**
+     * This is a method to apply for loan for already existing customers.
+     * This method was initially intented to expect a Customer and save the Customer if it does not exist already.
+     * This idea was pushed to a later versions due to some complications. In the current version, only already existing customer can apply for loan.
+     * @param tckn - For the customer who is applying for the loan.
+     * @return Map<Double, Boolean> - The map is always singleton. The key value of it is the loan amount. It is 0 if it is denied.
+     * Boolean value is the approval status of the application.
+     * @throws NotFoundException - This exception is possibly originated from customerService.getByTckn(). It is re-thrown to be handled on the controller level.
+     */
     @Override
-    public ResponseEntity<Map<Double, Boolean>> applyLoan(Long tckn) {
+    public Map<Double, Boolean> applyLoan(Long tckn) {
         try {
             Customer customer = customerService.getByTckn(tckn);
             customer.setCreditScore(calculateCreditScore(tckn));
@@ -44,12 +50,18 @@ public class LoanServiceImpl implements LoanService {
                                         .customer(customer)
                                         .build());
             }
-            return ResponseEntity.status(HttpStatus.OK).body(loanApplicationResponse);
+            return loanApplicationResponse;
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }
     }
-
+    /**
+     * This is a method is to determine the amount of loan.
+     * @param creditScore - Integer, to be used to determine loan interval.
+     * @param monthlySalary - Double, to be used to determine loan amount.
+     * @return Map<Double, Boolean> - The map is always singleton. The key value of it is the loan amount. It is 0 if it is denied.
+     * Boolean value is the approval status of the application.
+     */
     @Override
     public Map<Double, Boolean> loanApplicationProcessor(Integer creditScore, Double monthlySalary) {
         final Double CREDIT_LIMIT_MULTIPLIER = 4D;
@@ -63,7 +75,16 @@ public class LoanServiceImpl implements LoanService {
             return Collections.singletonMap(CREDIT_LIMIT_MULTIPLIER * monthlySalary, true);
         }
     }
-
+    /**
+     * This is a method is to get loans of a customer. It calls one of the two methods; getApprovedLoansById or getAllLoansById.
+     * This is decided by objectNode's "approved" field. It returns only approved loans or all.
+     * @param objectNode fields: tckn - 11 digits number, (optional) approved - boolean.
+     * @return List<LoanDto> - List of the loans the customer applied before. Only approved loans if "approved" of objectNode is true.
+     * @throws IllegalArgumentException thrown if the objectNode does not have a "tckn" field.
+     * @throws NotFoundException thrown if the customer is not found.
+     * @see #getAllLoansById(Long) 
+     * @see #getApprovedLoansById(Long)
+     */
     @Override
     public List<LoanDto> getLoans(ObjectNode objectNode) {
         if (!objectNode.has("tckn")) {
@@ -84,7 +105,15 @@ public class LoanServiceImpl implements LoanService {
             throw new NotFoundException(e.getMessage());
         }
     }
-
+    /**
+     * This is a one of the branches of getLoans. It is used only to get approved loans.
+     * Loans that are not approved for a customer are filtered out.
+     * @param tckn
+     * @return List<LoanDto> - List of the approved loans the customer applied before.
+     * @throws NotFoundException - thrown if the tckn does not exist in the repository.
+     * @see #getLoans(ObjectNode)
+     * @see #getAllLoansById(Long) 
+     */
     @Override
     public List<LoanDto> getApprovedLoansById(Long tckn) {
         if(!customerService.existById(tckn)) {
@@ -97,7 +126,15 @@ public class LoanServiceImpl implements LoanService {
                     .collect(Collectors.toList());
         }
     }
-
+    /**
+     * This is another one of the branches of getLoans. It is used to get all loans.
+     * Loans that are not approved for a customer are filtered out.
+     * @param tckn
+     * @return List<LoanDto> - List of the approved loans the customer applied before.
+     * @throws NotFoundException - thrown if the tckn does not exist in the repository.
+     * @see #getLoans(ObjectNode)
+     * @see #getApprovedLoansById(Long)
+     */
     @Override
     public List<LoanDto> getAllLoansById(Long tckn) {
         if(!customerService.existById(tckn)) {

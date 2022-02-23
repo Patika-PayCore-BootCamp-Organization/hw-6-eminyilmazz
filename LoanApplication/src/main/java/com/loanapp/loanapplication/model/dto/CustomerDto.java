@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Objects;
@@ -14,11 +15,12 @@ import java.util.Objects;
 @Builder
 public class CustomerDto {
     @Digits(fraction = 0, integer = 11)
-    @NotNull
+    @NotNull(message = "TCKN cannot be empty.")
     private Long tckn;
     private String name;
     private String lastName;
     @Pattern(regexp = "^[0-9]{10}", message = "Phone number needs to be 10 digits and can only contain only numbers.")
+    @NotBlank(message = "Phone number cannot be empty")
     private String phoneNumber;
     private Double monthlySalary;
 
