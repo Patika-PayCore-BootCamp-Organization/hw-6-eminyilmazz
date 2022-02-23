@@ -35,8 +35,8 @@ public class CustomerController {
      * @return Iterable<Customer>
      */
     @GetMapping("/all")
-    public Iterable<Customer> getAll(){
-        Iterable<Customer> customers = customerService.getAll();
+    public List<Customer> getAll(){
+        List<Customer> customers = customerService.getAll();
         List<Loan> loanList;
         for (Customer customer : customers) {
             loanList = loanService.getApprovedLoansById(customer.getTckn())
@@ -69,9 +69,9 @@ public class CustomerController {
      * @return A generic ResponseEntity<> - If adding customer is successful, status is OK, else BAD_REQUEST.
      */
     @PostMapping("/add")
-    public ResponseEntity<?> addCustomer(@Valid @RequestBody CustomerDto customerDto) {
+    public ResponseEntity<Customer> addCustomer(@Valid @RequestBody CustomerDto customerDto) {
         TcknValidator.validate(customerDto.getTckn());
-        return customerService.addCustomer(customerDto);
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.addCustomer(customerDto));
     }
     /**
      * @apiNote Updates an already existing Customer. Customer TCKN and phone number are validated.

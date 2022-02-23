@@ -40,4 +40,12 @@ public class Customer {
     @Transient
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Loan> loanList;
+
+    public Customer(String name, String lastName, Long tckn, String phoneNumber, double monthlySalary) {
+        this.name = name;
+        this.lastName = lastName;
+        this.tckn = tckn;
+        this.phoneNumber = phoneNumber;
+        this.monthlySalary = monthlySalary;
+    }
 }

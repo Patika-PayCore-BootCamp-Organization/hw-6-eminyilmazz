@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import static com.loanapp.loanapplication.model.dto.CustomerMapper.toDto;
+import java.util.List;
+
 import static com.loanapp.loanapplication.model.dto.CustomerMapper.toEntity;
 
 @Service
@@ -23,14 +24,14 @@ public class CustomerServiceImpl implements CustomerService {
      * @return Iterable<Customer>
      */
     @Override
-    public Iterable<Customer> getAll() {
+    public List<Customer> getAll() {
         return customerRepository.findAll();
     }
     /**
      * Get method for Customer.
      * @param tckn in Long type.
      * @return Customer, for the provided tckn.
-     * @throws NotFoundException - thrown if a Customer does not exist for the provided tckn.
+     * @throws NotFoundException thrown if a Customer does not exist for the provided tckn.
      */
     @Override
     public Customer getByTckn(Long tckn) {
@@ -40,17 +41,15 @@ public class CustomerServiceImpl implements CustomerService {
     /**
      * This method adds a Customer to the customer repository.
      * @param customerDto
-     * @return ResponseEntity<CustomerDto> - If adding customer is successful, status is CREATED, else BAD_REQUEST.
+     * @return CustomerDto
      * @throws DuplicateTcknException - thrown if the provided CustomerDto already exists in the repository by its tckn field.
      */
     @Override
-    public ResponseEntity<CustomerDto> addCustomer(CustomerDto customerDto) throws DuplicateTcknException {
+    public Customer addCustomer(CustomerDto customerDto) throws DuplicateTcknException {
         if (customerRepository.existsById(customerDto.getTckn())) {
             throw new DuplicateTcknException();
         }
-        Customer customer = customerRepository.save(toEntity(customerDto));
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(toDto(customer));
+        return customerRepository.save(toEntity(customerDto));
     }
     /**
      * Updates an already existing Customer.

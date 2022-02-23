@@ -4,13 +4,15 @@ import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.dto.CustomerDto;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface CustomerService {
 
-    Iterable<Customer> getAll();
+    List<Customer> getAll();
 
     Customer getByTckn(Long tckn);
 
-    ResponseEntity<CustomerDto> addCustomer(CustomerDto customerDto);
+    Customer addCustomer(CustomerDto customerDto);
 
     Customer updateCustomer(CustomerDto customerDto);
 

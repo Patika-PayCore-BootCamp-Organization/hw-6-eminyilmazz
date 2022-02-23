@@ -28,17 +28,22 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler ({NotFoundException.class})
-    protected ResponseEntity<String> notFoundException(NotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    protected ResponseEntity<Map<String, String>> notFoundException(NotFoundException e) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler({IllegalTcknException.class})
-    protected ResponseEntity<String> tcknException(IllegalTcknException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    protected ResponseEntity<Map<String, String>> tcknException(IllegalTcknException e){
+        Map<String, String> error = new HashMap<>();
+        error.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
-
     @ExceptionHandler({DuplicateTcknException.class})
-    protected ResponseEntity<String> tcknException(DuplicateTcknException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    protected ResponseEntity<Map<String, String>> tcknException(DuplicateTcknException e){
+            Map<String, String> error = new HashMap<>();
+            error.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }
