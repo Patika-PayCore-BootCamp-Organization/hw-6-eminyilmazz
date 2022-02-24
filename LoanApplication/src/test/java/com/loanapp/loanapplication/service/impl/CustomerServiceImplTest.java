@@ -70,11 +70,11 @@ class CustomerServiceImplTest {
 
     @Test
     void getByTckn() {
-        Customer expectedCustomer = new Customer("Thor","Parks",10000000950L,"8343458383",6676);
+        Customer expectedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
 
-        when(customerRepository.findById(10000000950L)).thenReturn(Optional.of(expectedCustomer));
+        when(customerRepository.findById(12345678910L)).thenReturn(Optional.of(expectedCustomer));
 
-        Customer actualCustomer = customerService.getByTckn(10000000950L);
+        Customer actualCustomer = customerService.getByTckn(12345678910L);
 
         assertEquals(expectedCustomer, actualCustomer);
     }

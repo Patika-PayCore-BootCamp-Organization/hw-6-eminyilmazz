@@ -6,8 +6,6 @@ import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.exception.TcknValidator;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
-import com.loanapp.loanapplication.model.dto.LoanDto;
-import com.loanapp.loanapplication.model.dto.LoanMapper;
 import com.loanapp.loanapplication.repository.LoanRepository;
 import com.loanapp.loanapplication.service.CustomerService;
 import com.loanapp.loanapplication.service.LoanService;
@@ -86,7 +84,7 @@ public class LoanServiceImpl implements LoanService {
      * @see #getApprovedLoansById(Long)
      */
     @Override
-    public List<LoanDto> getLoans(ObjectNode objectNode) {
+    public List<Loan> getLoans(ObjectNode objectNode) {
         if (!objectNode.has("tckn")) {
             throw new IllegalArgumentException("Provided body is not valid.\nBody needs to have an 11 digits value for TCKN." +
                     "\nExample:\n{\n\"tckn\" : \"12345678910\",\n\"approved\" : true\"\n}");
@@ -115,14 +113,13 @@ public class LoanServiceImpl implements LoanService {
      * @see #getAllLoansById(Long) 
      */
     @Override
-    public List<LoanDto> getApprovedLoansById(Long tckn) {
+    public List<Loan> getApprovedLoansById(Long tckn) {
         if(!customerService.existById(tckn)) {
             throw new NotFoundException("Customer tckn: " + tckn + " not found!");
         } else {
             List<Loan> loanList = loanRepository.findAllByCustomer_tckn(tckn);
             return loanList.stream()
                     .filter(Loan::isApprovalStatus)
-                    .map(LoanMapper::toDto)
                     .collect(Collectors.toList());
         }
     }
@@ -136,14 +133,11 @@ public class LoanServiceImpl implements LoanService {
      * @see #getApprovedLoansById(Long)
      */
     @Override
-    public List<LoanDto> getAllLoansById(Long tckn) {
+    public List<Loan> getAllLoansById(Long tckn) {
         if(!customerService.existById(tckn)) {
             throw new NotFoundException("Customer tckn: " + tckn + " not found!");
     } else {
-            List<Loan> loanList = loanRepository.findAllByCustomer_tckn(tckn);
-            return loanList.stream()
-                    .map(LoanMapper::toDto)
-                    .collect(Collectors.toList());
+            return loanRepository.findAllByCustomer_tckn(tckn);
         }
     }
 }

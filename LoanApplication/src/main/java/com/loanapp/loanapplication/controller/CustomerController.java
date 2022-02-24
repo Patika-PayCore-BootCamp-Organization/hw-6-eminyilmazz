@@ -39,10 +39,7 @@ public class CustomerController {
         List<Customer> customers = customerService.getAll();
         List<Loan> loanList;
         for (Customer customer : customers) {
-            loanList = loanService.getApprovedLoansById(customer.getTckn())
-                    .stream()
-                    .map(LoanMapper::toSimpleEntity)
-                    .collect(Collectors.toList());
+            loanList = loanService.getApprovedLoansById(customer.getTckn());
             customer.setLoanList(loanList);
         }
         return customers;
@@ -55,10 +52,7 @@ public class CustomerController {
     @GetMapping
     public ResponseEntity<Customer> getByTckn(@RequestParam Long tckn){
         TcknValidator.validate(tckn);
-        List<Loan> loanList = loanService.getApprovedLoansById(tckn)
-                .stream()
-                .map(LoanMapper::toSimpleEntity)
-                .collect(Collectors.toList());
+        List<Loan> loanList = loanService.getApprovedLoansById(tckn);
         Customer customer = customerService.getByTckn(tckn);
         customer.setLoanList(loanList);
         return ResponseEntity.status(HttpStatus.OK).body(customer);
@@ -109,7 +103,7 @@ public class CustomerController {
      * @return if approved field in the objectNode is true, returns only approved loans as a LoanDto list. Else, all of them.
      */
     @GetMapping("/loan/history")
-    public List<LoanDto> getLoans (@RequestBody ObjectNode objectNode) {
-        return loanService.getLoans(objectNode);
+    public ResponseEntity<List<Loan>> getLoans (@RequestBody ObjectNode objectNode) {
+        return ResponseEntity.status(HttpStatus.OK).body(loanService.getLoans(objectNode));
     }
 }

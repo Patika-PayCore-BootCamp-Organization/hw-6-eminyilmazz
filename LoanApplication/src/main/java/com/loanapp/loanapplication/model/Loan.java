@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 @Setter
 @Builder
-@AllArgsConstructor
 @Entity
 @Table(name = "loans")
 public class Loan {
@@ -40,6 +40,13 @@ public class Loan {
     public Loan(Double loanAmount, Customer customer) {
         this.loanAmount = loanAmount;
         this.customer = customer;
+    }
+
+    public Loan(Long id, Double loanAmount, Customer customer, boolean approvalStatus) {
+        this.id = id;
+        this.loanAmount = loanAmount;
+        this.customer = customer;
+        this.approvalStatus = approvalStatus;
     }
 
     public Loan() {}
