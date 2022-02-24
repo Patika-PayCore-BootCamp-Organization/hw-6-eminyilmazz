@@ -5,8 +5,6 @@ import com.loanapp.loanapplication.exception.TcknValidator;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
 import com.loanapp.loanapplication.model.dto.CustomerDto;
-import com.loanapp.loanapplication.model.dto.LoanDto;
-import com.loanapp.loanapplication.model.dto.LoanMapper;
 import com.loanapp.loanapplication.service.CustomerService;
 import com.loanapp.loanapplication.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Validated
@@ -65,7 +62,7 @@ public class CustomerController {
     @PostMapping("/add")
     public ResponseEntity<Customer> addCustomer(@Valid @RequestBody CustomerDto customerDto) {
         TcknValidator.validate(customerDto.getTckn());
-        return ResponseEntity.status(HttpStatus.OK).body(customerService.addCustomer(customerDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.addCustomer(customerDto));
     }
     /**
      * @apiNote Updates an already existing Customer. Customer TCKN and phone number are validated.
@@ -83,7 +80,8 @@ public class CustomerController {
      */
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteCustomer(@RequestParam(name = "tckn") Long tckn) {
-        return customerService.deleteCustomer(tckn);
+        customerService.deleteCustomer(tckn);
+        return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted.");
     }
     /**
      * @apiNote This API is to apply for loan. If the provided Customer does not in the customer table, it is saved. Else
@@ -107,3 +105,4 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK).body(loanService.getLoans(objectNode));
     }
 }
+

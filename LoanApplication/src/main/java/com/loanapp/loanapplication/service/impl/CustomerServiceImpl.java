@@ -71,12 +71,12 @@ public class CustomerServiceImpl implements CustomerService {
      * @throws NotFoundException - if a Customer does not exist for the provided tckn.
      */
     @Override
-    public ResponseEntity<?> deleteCustomer(Long tckn) {
+    public boolean deleteCustomer(Long tckn) {
         if (!customerRepository.existsById(tckn)){
             throw new NotFoundException("Delete operation is not successful.\nThe customer does not exist.");
         }
         customerRepository.deleteById(tckn);
-        return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted.");
+        return true;
     }
     /**
      * A method that checks repository if a customer exists for the provided tckn.

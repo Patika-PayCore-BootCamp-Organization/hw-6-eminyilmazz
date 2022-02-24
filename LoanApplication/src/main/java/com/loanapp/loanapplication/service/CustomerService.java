@@ -16,7 +16,7 @@ public interface CustomerService {
 
     Customer updateCustomer(CustomerDto customerDto);
 
-    ResponseEntity<?> deleteCustomer(Long tckn);
+    boolean deleteCustomer(Long tckn);
 
     boolean existById(Long tckn);
 }
