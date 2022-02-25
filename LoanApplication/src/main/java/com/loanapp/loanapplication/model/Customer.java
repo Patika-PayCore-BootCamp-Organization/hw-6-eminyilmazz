@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "customer")
-public class Customer {
+public class Customer implements Serializable {
     @Id
     @Column(name = "tckn", nullable = false)
     @Digits(fraction = 0, integer = 11)

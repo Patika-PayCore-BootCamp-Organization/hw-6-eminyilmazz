@@ -1,5 +1,7 @@
 package com.loanapp.loanapplication.model.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,15 +20,21 @@ import java.util.Objects;
 @AllArgsConstructor
 @Data
 @Builder
+@ApiModel(value = "Customer DTO")
 public class CustomerDto implements Serializable {
     @Digits(fraction = 0, integer = 11)
     @NotNull(message = "TCKN cannot be empty.")
+    @ApiModelProperty(name = "Customer TCKN", required = true, notes = "MUST be 11 digits number", example = "12345678910")
     private Long tckn;
+    @ApiModelProperty(name = "Customer Name", required = true, example = "'Emin'")
     private String name;
+    @ApiModelProperty(name = "Customer Last Name", required = true, example = "'Yilmaz'")
     private String lastName;
     @Pattern(regexp = "^[0-9]{10}", message = "Phone number needs to be 10 digits and can only contain only numbers.")
     @NotBlank(message = "Phone number cannot be empty")
+    @ApiModelProperty(name = "Phone Number", required = true, notes = "MUST be 10 digits string", example = "'1234567890'")
     private String phoneNumber;
+    @ApiModelProperty(name = "Monthly Salary", required = true, example = "1234")
     private Double monthlySalary;
 
     @Override
