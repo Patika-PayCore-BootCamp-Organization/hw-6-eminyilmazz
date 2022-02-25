@@ -7,16 +7,17 @@ import com.loanapp.loanapplication.model.dto.CustomerDto;
 import com.loanapp.loanapplication.repository.CustomerRepository;
 import com.loanapp.loanapplication.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static com.loanapp.loanapplication.model.dto.CustomerMapper.toEntity;
 
+@Transactional
 @Service
 public class CustomerServiceImpl implements CustomerService {
+
     @Autowired
     private CustomerRepository customerRepository;
     /**
@@ -71,6 +72,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @throws NotFoundException - if a Customer does not exist for the provided tckn.
      */
     @Override
+    @Deprecated
     public boolean deleteCustomer(Long tckn) {
         if (!customerRepository.existsById(tckn)){
             throw new NotFoundException("Delete operation is not successful.\nThe customer does not exist.");

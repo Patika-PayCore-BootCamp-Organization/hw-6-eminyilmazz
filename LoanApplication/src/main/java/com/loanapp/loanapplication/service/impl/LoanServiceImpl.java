@@ -140,4 +140,21 @@ public class LoanServiceImpl implements LoanService {
             return loanRepository.findAllByCustomer_tckn(tckn);
         }
     }
+    /**
+     * Delete method for loans of an existing Customer.
+     * This method is called to delete a Customer and the Loans of Customer.
+     * @param tckn of the customer to be deleted.
+     * @return A generic ResponseEntity<> - Returns an OK status if deletion is successful.
+     * @throws NotFoundException - if a Customer does not exist for the provided tckn.
+     */
+    @Override
+    public boolean deleteAllByCustomer_tckn(Long tckn) {
+        if (!customerService.existById(tckn)) {
+            throw new NotFoundException("Delete operation is not successful. The customer does not exist.");
+        }
+        else {
+            loanRepository.deleteAllByCustomer_Tckn(tckn);
+            return true;
+        }
+    }
 }

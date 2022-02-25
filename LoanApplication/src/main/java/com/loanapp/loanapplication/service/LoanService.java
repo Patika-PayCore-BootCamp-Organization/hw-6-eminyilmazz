@@ -17,4 +17,6 @@ public interface LoanService {
     List<Loan> getApprovedLoansById(Long tckn);
 
     List<Loan> getAllLoansById(Long tckn);
+
+    boolean deleteAllByCustomer_tckn(Long tckn);
 }

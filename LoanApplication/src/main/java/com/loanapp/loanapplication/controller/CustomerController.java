@@ -79,8 +79,9 @@ public class CustomerController {
      * @return A generic ResponseEntity<> - If to be deleted customer exists, returns an OK status. Else NOT_FOUND.
      */
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteCustomer(@RequestParam(name = "tckn") Long tckn) {
-        customerService.deleteCustomer(tckn);
+    public ResponseEntity<?> deleteCustomer(@RequestParam(name = "tckn") @ApiParam(name = "tckn",
+                                            type = "Long", required = true, example = "12345678910") Long tckn) {
+        loanService.deleteAllByCustomer_tckn(tckn);
         return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted.");
     }
     /**
