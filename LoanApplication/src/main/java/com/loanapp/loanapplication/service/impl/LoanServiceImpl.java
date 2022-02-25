@@ -4,19 +4,24 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.loanapp.loanapplication.exception.IllegalTcknException;
 import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.exception.TcknValidator;
+import com.loanapp.loanapplication.messaging.SmsProducer;
+import com.loanapp.loanapplication.messaging.SmsService;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
+import com.loanapp.loanapplication.model.dto.CustomerSmsDto;
 import com.loanapp.loanapplication.repository.LoanRepository;
 import com.loanapp.loanapplication.service.CustomerService;
 import com.loanapp.loanapplication.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.loanapp.loanapplication.model.dto.CustomerMapper.toSmsDto;
 import static com.loanapp.loanapplication.service.impl.CreditScoreService.calculateCreditScore;
 
 @Service
@@ -25,6 +30,8 @@ public class LoanServiceImpl implements LoanService {
     private CustomerService customerService;
     @Autowired
     private LoanRepository loanRepository;
+    @Autowired
+    private SmsProducer smsProducer;
     /**
      * This is a method to apply for loan for already existing customers.
      * This method was initially intented to expect a Customer and save the Customer if it does not exist already.
@@ -47,6 +54,7 @@ public class LoanServiceImpl implements LoanService {
                                         .approvalStatus(true)
                                         .customer(customer)
                                         .build());
+                smsProducer.messageOnLoanApproval(toSmsDto(customer, LocalDateTime.now(), loanApplicationResponse.keySet().iterator().next()));
             }
             return loanApplicationResponse;
         } catch (NotFoundException e) {

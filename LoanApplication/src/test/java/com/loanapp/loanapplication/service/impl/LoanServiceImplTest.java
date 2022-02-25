@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.loanapp.loanapplication.exception.IllegalTcknException;
 import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.exception.TcknValidator;
+import com.loanapp.loanapplication.messaging.SmsProducer;
+import com.loanapp.loanapplication.messaging.SmsService;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
 import com.loanapp.loanapplication.repository.LoanRepository;
@@ -32,7 +34,7 @@ class LoanServiceImplTest {
     private LoanRepository loanRepository;
 
     @Mock
-    private TcknValidator tcknValidator;
+    private SmsProducer smsProducer;
 
     @InjectMocks
     private LoanServiceImpl loanService;
@@ -132,6 +134,8 @@ class LoanServiceImplTest {
         expectedLoanMap.put(10000D, true);
 
         when(customerService.getByTckn(customer.getTckn())).thenReturn(customer);
+
+        doNothing().when(smsProducer).messageOnLoanApproval(any());
 
         Map<Double, Boolean> actualLoanMap = loanService.applyLoan(customer.getTckn());
 

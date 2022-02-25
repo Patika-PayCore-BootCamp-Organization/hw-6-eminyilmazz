@@ -1,4 +1,4 @@
-package com.loanapp.loanapplication.messaging;
+package com.loanapp.loanapplication.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

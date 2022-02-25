@@ -1,5 +1,6 @@
 package com.loanapp.loanapplication.messaging;
 
+import com.loanapp.loanapplication.config.RabbitMQConfig;
 import com.loanapp.loanapplication.model.dto.CustomerSmsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

@@ -3,6 +3,7 @@ package com.loanapp.loanapplication.model.dto;
 import com.loanapp.loanapplication.model.Customer;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class CustomerMapper {
     private CustomerMapper(){}
@@ -24,7 +25,9 @@ public class CustomerMapper {
                 .monthlySalary(customerDto.getMonthlySalary())
                 .build();
     }
-    public static CustomerSmsDto toSmsDto(Customer customer, LocalDateTime date, Double amount) {
+    public static CustomerSmsDto toSmsDto(Customer customer, LocalDateTime ldt, Double amount) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String date = ldt.format(formatter);
         return CustomerSmsDto.builder()
                 .name(customer.getName())
                 .lastName(customer.getLastName())
