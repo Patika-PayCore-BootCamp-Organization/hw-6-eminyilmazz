@@ -469,4 +469,29 @@ class LoanServiceImplTest {
 
         verify(loanRepository, never()).findAllByCustomer_tckn(any());
     }
+
+    @Test
+    void deleteAllByCustomer_tckn() {
+        Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+
+        doNothing().when(loanRepository).deleteAllByCustomer_Tckn(anyLong());
+        when(customerService.existById(deletedCustomer.getTckn())).thenReturn(true);
+
+        loanService.deleteAllByCustomer_tckn(deletedCustomer.getTckn());
+
+        verify(loanRepository, times(1)).deleteAllByCustomer_Tckn(deletedCustomer.getTckn());
+    }
+
+    @Test
+    void deleteCustomer_NotExist_ThrowNotFoundException() {
+        Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
+
+        when(customerService.existById(deletedCustomer.getTckn())).thenReturn(false);
+
+        assertThatThrownBy(() -> loanService.deleteAllByCustomer_tckn(deletedCustomer.getTckn()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Delete operation is not successful. The customer does not exist.");
+
+        verify(loanRepository, never()).deleteById(any());
+    }
 }

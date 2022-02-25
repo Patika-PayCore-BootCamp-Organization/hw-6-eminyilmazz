@@ -151,6 +151,9 @@ class CustomerServiceImplTest {
         verify(customerRepository, never()).save(any());
     }
 
+    /**
+     * CustomerService.deleteCustomer() is now deprecated. The test might be disabled later as it is no longer relevant.
+     */
     @Test
     void deleteCustomer() {
         Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
