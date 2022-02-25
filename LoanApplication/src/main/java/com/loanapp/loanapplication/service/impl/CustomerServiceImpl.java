@@ -5,7 +5,9 @@ import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.dto.CustomerDto;
 import com.loanapp.loanapplication.repository.CustomerRepository;
+import com.loanapp.loanapplication.repository.LoanRepository;
 import com.loanapp.loanapplication.service.CustomerService;
+import com.loanapp.loanapplication.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private LoanRepository loanRepository;
     /**
      * Gets all customers from repository.
      * @return Iterable<Customer>
@@ -72,12 +76,15 @@ public class CustomerServiceImpl implements CustomerService {
      * @throws NotFoundException - if a Customer does not exist for the provided tckn.
      */
     @Override
-    @Deprecated
     public boolean deleteCustomer(Long tckn) {
         if (!customerRepository.existsById(tckn)){
-            throw new NotFoundException("Delete operation is not successful.\nThe customer does not exist.");
+            throw new NotFoundException("Delete operation is not successful. The customer does not exist.");
         }
-        customerRepository.deleteById(tckn);
+        if(loanRepository.findAllByCustomer_tckn(tckn).isEmpty()) {
+            customerRepository.deleteById(tckn);
+        } else {
+            loanRepository.deleteAllByCustomer_Tckn(tckn);
+        }
         return true;
     }
     /**

@@ -115,7 +115,7 @@ public class CustomerController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteCustomer(@RequestParam(name = "tckn") @ApiParam(name = "tckn", type = "Long",
                                             required = true, example = "12345678910") Long tckn) {
-        loanService.deleteAllByCustomer_tckn(tckn);
+        customerService.deleteCustomer(tckn);
         return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted.");
     }
     /**

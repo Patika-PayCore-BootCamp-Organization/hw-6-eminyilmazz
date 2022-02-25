@@ -5,10 +5,8 @@ import com.loanapp.loanapplication.exception.IllegalTcknException;
 import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.exception.TcknValidator;
 import com.loanapp.loanapplication.messaging.SmsProducer;
-import com.loanapp.loanapplication.messaging.SmsService;
 import com.loanapp.loanapplication.model.Customer;
 import com.loanapp.loanapplication.model.Loan;
-import com.loanapp.loanapplication.model.dto.CustomerSmsDto;
 import com.loanapp.loanapplication.repository.LoanRepository;
 import com.loanapp.loanapplication.service.CustomerService;
 import com.loanapp.loanapplication.service.LoanService;
@@ -156,6 +154,7 @@ public class LoanServiceImpl implements LoanService {
      * @throws NotFoundException - if a Customer does not exist for the provided tckn.
      */
     @Override
+    @Deprecated
     public boolean deleteAllByCustomer_tckn(Long tckn) {
         if (!customerService.existById(tckn)) {
             throw new NotFoundException("Delete operation is not successful. The customer does not exist.");
