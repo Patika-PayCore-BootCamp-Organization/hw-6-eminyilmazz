@@ -40,6 +40,13 @@ public class ApiExceptionHandler {
         error.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    protected ResponseEntity<Map<String, String>> illegalArgumentException(IllegalArgumentException e){
+        Map<String, String> error = new HashMap<>();
+        error.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
     @ExceptionHandler({DuplicateTcknException.class})
     protected ResponseEntity<Map<String, String>> tcknException(DuplicateTcknException e){
             Map<String, String> error = new HashMap<>();

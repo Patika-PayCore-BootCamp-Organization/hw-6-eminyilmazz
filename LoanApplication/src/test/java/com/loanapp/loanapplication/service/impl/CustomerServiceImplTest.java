@@ -3,27 +3,19 @@ package com.loanapp.loanapplication.service.impl;
 import com.loanapp.loanapplication.exception.DuplicateTcknException;
 import com.loanapp.loanapplication.exception.NotFoundException;
 import com.loanapp.loanapplication.model.Customer;
-import com.loanapp.loanapplication.model.dto.CustomerDto;
 import com.loanapp.loanapplication.repository.CustomerRepository;
-import org.hibernate.annotations.NotFound;
-import org.junit.jupiter.api.Disabled;
+import com.loanapp.loanapplication.repository.LoanRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.loanapp.loanapplication.model.dto.CustomerMapper.toDto;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +26,9 @@ class CustomerServiceImplTest {
 
     @Mock
     private CustomerRepository customerRepository;
+
+    @Mock
+    private LoanRepository loanRepository;
 
     @InjectMocks
     private CustomerServiceImpl customerService;
@@ -82,7 +77,7 @@ class CustomerServiceImplTest {
     void getByTckn_NotExist_ThrowsNotFoundException() {
         Customer expectedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
 
-        when(customerRepository.findById(12345678910L)).thenReturn(Optional.empty());
+        when(customerRepository.findById(12345678910L)).thenReturn(empty());
 
         assertThatThrownBy(() -> customerService.getByTckn(expectedCustomer.getTckn()))
                 .isInstanceOf(NotFoundException.class)
@@ -151,15 +146,13 @@ class CustomerServiceImplTest {
         verify(customerRepository, never()).save(any());
     }
 
-    /**
-     * CustomerService.deleteCustomer() is now deprecated. The test might be disabled later as it is no longer relevant.
-     */
     @Test
     void deleteCustomer() {
         Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);
 
         when(customerRepository.existsById(deletedCustomer.getTckn())).thenReturn(true);
-
+        doNothing().when(customerRepository).deleteById(12345678910L);
+        when(loanRepository.findAllByCustomer_tckn(12345678910L)).thenReturn(Collections.emptyList());
         customerService.deleteCustomer(deletedCustomer.getTckn());
 
         verify(customerRepository, times(1)).deleteById(deletedCustomer.getTckn());
@@ -173,7 +166,7 @@ class CustomerServiceImplTest {
 
         assertThatThrownBy(() -> customerService.deleteCustomer(deletedCustomer.getTckn()))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("Delete operation is not successful.\nThe customer does not exist.");
+                .hasMessageContaining("Delete operation is not successful. The customer does not exist.");
 
         verify(customerRepository, never()).deleteById(any());
     }

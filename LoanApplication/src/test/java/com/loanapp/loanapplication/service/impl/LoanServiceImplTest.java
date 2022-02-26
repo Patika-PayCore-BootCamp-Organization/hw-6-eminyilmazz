@@ -485,7 +485,9 @@ class LoanServiceImplTest {
 
         verify(loanRepository, times(1)).deleteAllByCustomer_Tckn(deletedCustomer.getTckn());
     }
-
+    /**
+     * LoanService.deleteCustomer() is now deprecated. The test might be disabled later as it is no longer relevant.
+     */
     @Test
     void deleteCustomer_NotExist_ThrowNotFoundException() {
         Customer deletedCustomer = new Customer("Dummy", "Test",12345678910L, "1234567890",1234D);

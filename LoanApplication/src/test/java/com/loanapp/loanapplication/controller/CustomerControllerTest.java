@@ -95,13 +95,19 @@ class CustomerControllerTest {
 
         when(customerService.getByTckn(10000000850L)).thenReturn(expectedCustomer);
 
-        MockHttpServletResponse response = mockMvc.perform(get("/customer?tckn=" + expectedCustomer.getTckn()).accept(MediaType.APPLICATION_JSON))
+        MockHttpServletResponse response = mockMvc.perform(get("/customer/get?tckn=" + expectedCustomer.getTckn()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn().getResponse();
 
                 Customer actualCustomer = new ObjectMapper().readValue(response.getContentAsString(), Customer.class);
-                assertEquals(expectedCustomer, actualCustomer);
+
+        assertEquals(expectedCustomer.getTckn(), actualCustomer.getTckn());
+        assertEquals(expectedCustomer.getPhoneNumber(), actualCustomer.getPhoneNumber());
+        assertEquals(expectedCustomer.getName(), actualCustomer.getName());
+        assertEquals(expectedCustomer.getLastName(), actualCustomer.getLastName());
+        assertEquals(expectedCustomer.getMonthlySalary(), actualCustomer.getMonthlySalary());
+//        assertEquals(expectedCustomer, actualCustomer);
     }
 
     @Test

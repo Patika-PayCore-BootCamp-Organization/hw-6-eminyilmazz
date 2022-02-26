@@ -147,6 +147,7 @@ public class CustomerController {
             @ApiResponse(code = 400, message = "Bad request. TCKN is not valid."),
             @ApiResponse(code = 404, message = "Customer not found.")})
     @GetMapping("/loan/history")
+    @ResponseBody
     public ResponseEntity<List<Loan>> getLoans (@RequestBody @ApiParam(name = "objectNode", example = "{\"tckn\" : 12345678910, \"approved\" : \"true\"}") ObjectNode objectNode) {
         return ResponseEntity.status(HttpStatus.OK).body(loanService.getLoans(objectNode));
     }
