@@ -53,9 +53,9 @@ such as service, repository, controller, model.
 3. Navigate to the project files, and run ```mvn clean install```
 4. Then run ```mvn spring-boot:run```
 
-The server will run on localhost:8080 by default and PostgreSQL will have dummy data from dummy.sql.  
-If you don't want to run with maven cmd commands, open the project as a maven project with your IDE.  
-Don't forget to run it with maven clean install.
+&nbsp;&nbsp;&nbsp;&nbsp;The server will run on localhost:8080 by default and PostgreSQL will have dummy data from dummy.sql.  
+&nbsp;&nbsp;&nbsp;&nbsp;If you don't want to run with maven cmd commands, open the project as a maven project with your IDE.  
+&nbsp;&nbsp;&nbsp;&nbsp;Don't forget to run it with maven clean install.
 
 ##Diagrams
 
@@ -69,5 +69,22 @@ Don't forget to run it with maven clean install.
 
 ---
 
-![](.\database_schema.png)
+![database_schema](.\database_schema.png)
 
+##Improvements
+
+---
+* On service level, there are some unnecessary cross dependencies. In the future, I plan to optimize it
+to have better and more isolated services for Loan and Customer.
+
+* Some tests are not completely relevant. In controller integration tests, some lists of loans only compared as
+JSON Strings. This is a go around solution for serialization / deserialization and comprassion issues with date data type. 
+
+
+
+##Other
+
+---
+
+As I previously mentioned, this is a project I tried to learn with and experiment what I learnt. Any suggestions, feedbacks are always welcome. 
+If you want to reach out to me for any reason, you can contact me on [Github](https://github.com/eminyilmazz) as well as [Linked.in](https://www.linkedin.com/in/eminyilmz/) and Discord @ Emin#4100.
